@@ -6,9 +6,22 @@ static Layer *s_layer;
 static void update_layer_callback(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_frame(layer);
 
+#ifdef PBL_ROUND
+  GTextAttributes *attributes = graphics_text_attributes_create();
+  graphics_text_attributes_enable_screen_text_flow(attributes, 8);
+#endif
+
   graphics_context_set_text_color(ctx, GColorBlack);
-  graphics_draw_text(ctx, "Text here.", fonts_get_system_font(FONT_KEY_FONT_FALLBACK), GRect(5, 5, bounds.size.w - 10, 100), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
-  graphics_draw_text(ctx, "And text here as well.", fonts_get_system_font(FONT_KEY_FONT_FALLBACK), GRect(90, 100, bounds.size.w - 95, 60), GTextOverflowModeWordWrap, GTextAlignmentRight, NULL);
+  graphics_draw_text(ctx, "Text here.", fonts_get_system_font(FONT_KEY_FONT_FALLBACK), 
+                     GRect(5, 5, bounds.size.w - 10, 100), GTextOverflowModeWordWrap, 
+                     GTextAlignmentLeft, PBL_IF_RECT_ELSE(NULL, attributes));
+  graphics_draw_text(ctx, "And text here as well.", fonts_get_system_font(FONT_KEY_FONT_FALLBACK), 
+                     GRect(90, 100, bounds.size.w - 95, 60), GTextOverflowModeWordWrap, 
+                     GTextAlignmentRight, PBL_IF_RECT_ELSE(NULL, attributes));
+
+#ifdef PBL_ROUND
+  graphics_text_attributes_destroy(attributes);
+#endif
 }
 
 static void main_window_load(Window *window) {
